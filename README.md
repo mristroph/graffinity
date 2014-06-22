@@ -6,9 +6,7 @@ Graffinity is an open &amp; infinite canvas. It's for all, by all, shared in rea
 # Running Locally
 
 ``` bash
-cd server
 npm install
-cd ..
 foreman start
 ```
 
