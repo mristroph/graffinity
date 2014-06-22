@@ -3,7 +3,17 @@ graffinity
 
 Graffinity is an open &amp; infinite canvas. It's for all, by all, shared in real-time.
 
-Game Plan:
+# Running Locally
+
+``` bash
+cd server
+npm install
+cd ..
+foreman start
+```
+
+
+# Game Plan
 * basic drawing app
 * synced canvas -- everyone sees everyone elses stuff
 * persistance -- save all strokes, and load the entire history to each new session
