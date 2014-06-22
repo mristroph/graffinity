@@ -13,12 +13,13 @@ server.listen(port);
 var wss = new WebSocketServer({server: server});
 console.log('websocket server created');
 
+wss.broadcast = function(data) {
+    for (var i in this.clients)
+	this.clients[i].send(data);
+};
+
 wss.on('connection', function(ws) {
 	console.log('websocket connection open');
-
-	var id = setInterval(function() {
-		ws.send(JSON.stringify(new Date()), function() {  });
-	    }, 1000);
 
 	ws.on('close', function() {
 		console.log('websocket connection close');
@@ -26,6 +27,7 @@ wss.on('connection', function(ws) {
 	    });
 
 	ws.on( 'message', function ( message ) {
+		wss.broadcast( message );
 		console.log( message );
 	    });
     });
