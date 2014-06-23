@@ -43,7 +43,7 @@ wss.on('connection', function(ws) {
 	ws.on( 'message', function ( message ) {
 		wss.broadcast( message );
 		console.log( message );
-		objects.insert({servertime: 0, message:message},{w:1}, function(err, result) {});
+		objects.insert({servertime: new Date().getTime(), message:message},{w:1}, function(err, result) {});
 	    });
 
 	objects.find({}).each(function(err,doc) {
