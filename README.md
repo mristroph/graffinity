@@ -12,8 +12,8 @@ foreman start
 
 
 # Game Plan
-* basic drawing app
-* synced canvas -- everyone sees everyone elses stuff
+* basic drawing app (DONE)
+* synced canvas -- everyone sees everyone elses stuff (DONE)
 * persistance -- save all strokes, and load the entire history to each new session
 * infinity -- add scrolling, make the canvas infinite. lazy load stuff
 * everyone in the world can draw together in one, open and infinite canvas
