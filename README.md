@@ -21,7 +21,7 @@ Then open a couple of windows and hit up localhost:5000!
 * (DONE) basic drawing app
 * (DONE) synced canvas -- everyone sees everyone elses stuff
 * (DONE)persistance -- save all strokes, and load the entire history to each new session
-* infinity -- add scrolling, make the canvas infinite
+* infinity -- add scrolling, make the canvas infinite. each user "starts" at their coordinates
 * add better drawing tools, eraser, etc.
 * show connected users, add chat
 * lazily load stuff for performance
