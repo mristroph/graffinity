@@ -10,6 +10,21 @@ app.use(express.static(__dirname + '/'));
 var server = http.createServer(app);
 server.listen(port);
 
+var mongo = require('mongodb');
+
+var mongoUri = process.env.MONGOLAB_URI ||
+  process.env.MONGOHQ_URL ||
+    'mongodb://localhost/mydb';
+
+var objects;
+
+mongo.Db.connect(mongoUri, function (err, db) {
+	db.collection('objects', function(er, collection) {
+		objects = collection;
+	    });
+    });
+    
+
 var wss = new WebSocketServer({server: server});
 console.log('websocket server created');
 
@@ -28,5 +43,13 @@ wss.on('connection', function(ws) {
 	ws.on( 'message', function ( message ) {
 		wss.broadcast( message );
 		console.log( message );
+		objects.insert({servertime: 0, message:message},{w:1}, function(err, result) {});
 	    });
+
+	objects.find({}).each(function(err,doc) {
+		if(doc) {
+		    ws.send(doc['message']);
+		}
+	    });
+
     });
