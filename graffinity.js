@@ -12,7 +12,7 @@ var ws = new WebSocket(host);
 
 ws.onmessage = function (event) {
     var p = JSON.parse(event.data);
-    addLine(p[0],p[1],p[2],p[3]);
+    addLine(p[0],p[1],p[2],p[3],"#444444",5);
 };
 
 $('#currentCanvas').mousedown(function(e){
@@ -27,12 +27,16 @@ $('#currentCanvas').mousemove(function(e){
 	    oldY = y;
 	    x = e.pageX - this.offsetLeft;
 	    y = e.pageY - this.offsetTop;
+	    addLine(oldX, oldY, x, y, "#888888",5);
 	    ws.send(JSON.stringify([oldX,oldY,x,y]));
-	    addLine(oldX, oldY, x, y);
+
 	}
     });
 
-function addLine(x1,y1,x2,y2) {
+function addLine(x1,y1,x2,y2,color,width) {
+    context.strokeStyle = color;
+    context.lineJoin = "round";
+    context.lineWidth = width;
     context.beginPath();
     context.moveTo(x1,y1);
     context.lineTo(x2, y2, true);
