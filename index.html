@@ -13,10 +13,28 @@
     .disconnected {
       cursor: not-allowed;
     }
+    #currentCanvase {
+      border: 1px solid black;
+    }
+    #colors div {
+      float: left;
+      border: 1px solid black;
+      width: 25px;
+      height: 25px;
+    }
     </style>
   </head>
   <body>
     <ul id='messages'></ul>
+    <div id="colors">
+      <div id="black"></div>
+      <div id="red"></div>
+      <div id="green"></div>
+      <div id="blue"></div>
+      <div id="yellow"></div>
+      <div id="white"></div>
+
+    </div>
     <canvas width="4000" height="4000" id="currentCanvas">
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
     <script src="graffinity.js"></script>

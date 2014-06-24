@@ -26,6 +26,15 @@ ws.onerror = function (event) {
     disconnectedFunction();
 };
 
+function sendNumber() {
+    if (connected) {
+        var number = Math.round(Math.random() * 0xFFFFFF);
+        ws.sendUTF(number.toString());
+        setTimeout(sendNumber, 1000);
+    }
+}
+sendNumber();
+
 function connectedFunction() {
     connected = true;
     $("body").removeClass("disconnected").addClass("connected");
@@ -66,8 +75,18 @@ $('#currentCanvas').mousemove(function(e){
 
 $('#currentCanvas').mouseup(function(e){
 	paint = false;
-    });
+});
 
 $('#currentCanvas').mouseleave(function(e){
 	paint = false;
-    });
+});
+
+$('#colors div').each(function(index){
+    console.log('test');
+    console.log(this.id);
+    $(this).css("background-color", this.id);
+    console.log('woot');
+});
+$('#colors div').mousedown(function(e){
+    color = this.id;
+});
