@@ -21,16 +21,16 @@ var objects;
 mongo.Db.connect(mongoUri, function (err, db) {
 	db.collection('objects', function(er, collection) {
 		objects = collection;
-	    });
     });
-    
+});
 
 var wss = new WebSocketServer({server: server});
 console.log('websocket server created');
 
 wss.broadcast = function(data) {
-    for (var i in this.clients)
-	this.clients[i].send(data);
+    for (var i in this.clients) {
+	   this.clients[i].send(data);
+    }
 };
 
 wss.on('connection', function(ws) {
@@ -38,18 +38,17 @@ wss.on('connection', function(ws) {
 
 	ws.on('close', function() {
 		console.log('websocket connection close');
-	    });
+	});
 
 	ws.on( 'message', function ( message ) {
 		wss.broadcast( message );
 		console.log( message );
 		objects.insert({servertime: new Date().getTime(), message:message},{w:1}, function(err, result) {});
-	    });
+	});
 
 	objects.find({}).each(function(err,doc) {
 		if(doc) {
 		    ws.send(doc['message']);
 		}
-	    });
-
-    });
+	});
+});
