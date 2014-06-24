@@ -82,11 +82,29 @@ $('#currentCanvas').mouseleave(function(e){
 });
 
 $('#colors div').each(function(index){
-    console.log('test');
-    console.log(this.id);
     $(this).css("background-color", this.id);
-    console.log('woot');
 });
 $('#colors div').mousedown(function(e){
     color = this.id;
+    makeCursor();
 });
+
+
+loop();
+
+
+function loop() {
+    makeCursor();
+    setTimeout(loop, 1000);
+}
+
+function makeCursor() {
+    var cursor = document.createElement('canvas');
+    cursor.width = 10;
+    cursor.height = 10;
+    ctx = cursor.getContext('2d');
+    ctx.fillStyle = color;
+    ctx.fillRect(0,0,10,10);
+    
+    document.body.style.cursor = 'url(' + cursor.toDataURL() + '), auto';
+}
