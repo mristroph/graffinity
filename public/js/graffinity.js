@@ -102,11 +102,7 @@ $('#colors div').mousedown(function(e){
 /* END: color palette */
 
 /* START: cursor code */
-loop();
-function loop() {
-    makeCursor();
-    requestAnimFrame(loop);
-}
+makeCursor();
 
 function makeCursor() {
     var cursor = document.createElement('canvas');
