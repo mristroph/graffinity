@@ -1,19 +1,42 @@
 context = document.getElementById('currentCanvas').getContext("2d");
-context.strokeStyle = "#444444";
-context.lineJoin = "round";
-context.lineWidth = 5;
-    
+var connected = false;
 var x;
 var y;
 var paint;
+var color = "#444444";
+var width = 5;
 
 var host = location.origin.replace(/^http/, 'ws')
 var ws = new WebSocket(host);
 
 ws.onmessage = function (event) {
     var p = JSON.parse(event.data);
-    addLine(p[0],p[1],p[2],p[3],"#444444",5);
+    addLine(p[0],p[1],p[2],p[3],p[4],p[5]);
 };
+
+ws.onopen = function (event) {
+    connected = true;
+};
+
+ws.onclose = function (event) {
+    connected = false;
+};
+
+ws.onerror = function (event) {
+    connected = false;
+};
+
+
+function addLine(x1,y1,x2,y2,lineColor,lineWidth) {
+    context.strokeStyle = lineColor;
+    context.lineJoin = "round";
+    context.lineWidth = lineWidth;
+    context.beginPath();
+    context.moveTo(x1,y1);
+    context.lineTo(x2, y2, true);
+    context.closePath();
+    context.stroke();
+}
 
 $('#currentCanvas').mousedown(function(e){
 	x = e.pageX - this.offsetLeft;
@@ -22,28 +45,16 @@ $('#currentCanvas').mousedown(function(e){
     });
 
 $('#currentCanvas').mousemove(function(e){
-	if(paint){
+	if(paint && connected){
 	    oldX = x;
 	    oldY = y;
 	    x = e.pageX - this.offsetLeft;
 	    y = e.pageY - this.offsetTop;
-	    addLine(oldX, oldY, x, y, "#888888",5);
-	    ws.send(JSON.stringify([oldX,oldY,x,y]));
+	    addLine(oldX, oldY, x, y, color, width);
+	    ws.send(JSON.stringify([oldX,oldY,x,y,color,width]));
 
 	}
     });
-
-function addLine(x1,y1,x2,y2,color,width) {
-    context.strokeStyle = color;
-    context.lineJoin = "round";
-    context.lineWidth = width;
-    context.beginPath();
-    context.moveTo(x1,y1);
-    context.lineTo(x2, y2, true);
-    context.closePath();
-    context.stroke();
-
-}
 
 $('#currentCanvas').mouseup(function(e){
 	paint = false;
@@ -52,4 +63,3 @@ $('#currentCanvas').mouseup(function(e){
 $('#currentCanvas').mouseleave(function(e){
 	paint = false;
     });
-
