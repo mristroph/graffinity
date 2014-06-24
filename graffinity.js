@@ -15,17 +15,25 @@ ws.onmessage = function (event) {
 };
 
 ws.onopen = function (event) {
-    connected = true;
+    connectedFunction();
 };
 
 ws.onclose = function (event) {
-    connected = false;
+    disconnectedFunction();
 };
 
 ws.onerror = function (event) {
-    connected = false;
+    disconnectedFunction();
 };
 
+function connectedFunction() {
+    connected = true;
+    $("body").removeClass("disconnected").addClass("connected");
+}
+function disconnectedFunction() {
+    connected = false;
+    $("body").removeClass("connected").addClass("disconnected");
+}
 
 function addLine(x1,y1,x2,y2,lineColor,lineWidth) {
     context.strokeStyle = lineColor;
