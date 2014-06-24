@@ -1,4 +1,4 @@
-context = document.getElementById('currentCanvas').getContext("2d");
+var context = document.getElementById('currentCanvas').getContext("2d");
 var connected = false;
 var x;
 var y;
@@ -101,7 +101,7 @@ $('#colors div').mousedown(function(e){
 loop();
 function loop() {
     makeCursor();
-    setTimeout(loop, 1000);
+    requestAnimFrame(loop);
 }
 function makeCursor() {
     var cursor = document.createElement('canvas');
