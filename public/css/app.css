@@ -1,0 +1,13 @@
+.disconnected {
+  cursor: not-allowed;
+}
+#currentCanvas {
+  border: 1px solid black;
+  display: block;
+}
+#colors div {
+  float: left;
+  border: 1px solid black;
+  width: 25px;
+  height: 25px;
+}
