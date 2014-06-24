@@ -106,5 +106,5 @@ function makeCursor() {
     ctx.fillStyle = color;
     ctx.fillRect(0,0,10,10);
     
-    document.body.style.cursor = 'url(' + cursor.toDataURL() + '), auto';
+    document.body.style.cursor = 'url(' + cursor.toDataURL() + ') 5 5, auto';
 }
