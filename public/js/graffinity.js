@@ -1,10 +1,17 @@
+// Elements
 var context = document.getElementById('currentCanvas').getContext("2d");
+var $body = $('body');
+var $currentCanvas = $('#currentCanvas');
+var $colors = $("#colors");
+
+// Variables
 var connected = false;
+var color = "#444444";
+var width = 5;
 var x;
 var y;
 var paint;
-var color = "#444444";
-var width = 5;
+
 
 var host = location.origin.replace(/^http/, 'ws')
 var ws = new WebSocket(host);
@@ -37,11 +44,11 @@ sendNumber();
 
 function connectedFunction() {
     connected = true;
-    $("body").removeClass("disconnected").addClass("connected");
+    $body.removeClass("disconnected").addClass("connected");
 }
 function disconnectedFunction() {
     connected = false;
-    $("body").removeClass("connected").addClass("disconnected");
+    $body.removeClass("connected").addClass("disconnected");
 }
 
 function addLine(x1,y1,x2,y2,lineColor,lineWidth) {
@@ -55,13 +62,13 @@ function addLine(x1,y1,x2,y2,lineColor,lineWidth) {
     context.stroke();
 }
 
-$('#currentCanvas').mousedown(function(e){
+$currentCanvas.mousedown(function(e){
 	x = e.pageX - this.offsetLeft;
 	y = e.pageY - this.offsetTop;
 	paint = true;
     });
 
-$('#currentCanvas').mousemove(function(e){
+$currentCanvas.mousemove(function(e){
 	if(paint && connected){
 	    oldX = x;
 	    oldY = y;
@@ -73,11 +80,11 @@ $('#currentCanvas').mousemove(function(e){
 	}
     });
 
-$('#currentCanvas').mouseup(function(e){
+$currentCanvas.mouseup(function(e){
 	paint = false;
 });
 
-$('#currentCanvas').mouseleave(function(e){
+$currentCanvas.mouseleave(function(e){
 	paint = false;
 });
 
@@ -85,12 +92,9 @@ $('#currentCanvas').mouseleave(function(e){
 /* START: color palette */
 var CSS_COLOR_NAMES = ["AliceBlue","AntiqueWhite","Aqua","Aquamarine","Azure","Beige","Bisque","Black","BlanchedAlmond","Blue","BlueViolet","Brown","BurlyWood","CadetBlue","Chartreuse","Chocolate","Coral","CornflowerBlue","Cornsilk","Crimson","Cyan","DarkBlue","DarkCyan","DarkGoldenRod","DarkGray","DarkGrey","DarkGreen","DarkKhaki","DarkMagenta","DarkOliveGreen","Darkorange","DarkOrchid","DarkRed","DarkSalmon","DarkSeaGreen","DarkSlateBlue","DarkSlateGray","DarkSlateGrey","DarkTurquoise","DarkViolet","DeepPink","DeepSkyBlue","DimGray","DimGrey","DodgerBlue","FireBrick","FloralWhite","ForestGreen","Fuchsia","Gainsboro","GhostWhite","Gold","GoldenRod","Gray","Grey","Green","GreenYellow","HoneyDew","HotPink","IndianRed","Indigo","Ivory","Khaki","Lavender","LavenderBlush","LawnGreen","LemonChiffon","LightBlue","LightCoral","LightCyan","LightGoldenRodYellow","LightGray","LightGrey","LightGreen","LightPink","LightSalmon","LightSeaGreen","LightSkyBlue","LightSlateGray","LightSlateGrey","LightSteelBlue","LightYellow","Lime","LimeGreen","Linen","Magenta","Maroon","MediumAquaMarine","MediumBlue","MediumOrchid","MediumPurple","MediumSeaGreen","MediumSlateBlue","MediumSpringGreen","MediumTurquoise","MediumVioletRed","MidnightBlue","MintCream","MistyRose","Moccasin","NavajoWhite","Navy","OldLace","Olive","OliveDrab","Orange","OrangeRed","Orchid","PaleGoldenRod","PaleGreen","PaleTurquoise","PaleVioletRed","PapayaWhip","PeachPuff","Peru","Pink","Plum","PowderBlue","Purple","Red","RosyBrown","RoyalBlue","SaddleBrown","Salmon","SandyBrown","SeaGreen","SeaShell","Sienna","Silver","SkyBlue","SlateBlue","SlateGray","SlateGrey","Snow","SpringGreen","SteelBlue","Tan","Teal","Thistle","Tomato","Turquoise","Violet","Wheat","White","WhiteSmoke","Yellow","YellowGreen"];
 $.each(CSS_COLOR_NAMES, function( index, value ) {
-    $("#colors").append("<div id=\"" + value + "\"></div>" );
+    $colors.append('<div id="' + value + '" style="background-color: ' + value + ';"></div>');
 });
 
-$('#colors div').each(function(index){
-    $(this).css("background-color", this.id);
-});
 $('#colors div').mousedown(function(e){
     color = this.id;
     makeCursor();
@@ -103,6 +107,7 @@ function loop() {
     makeCursor();
     requestAnimFrame(loop);
 }
+
 function makeCursor() {
     var cursor = document.createElement('canvas');
     cursor.width = 10;
