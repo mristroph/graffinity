@@ -10,8 +10,9 @@
     .disconnected {
       cursor: not-allowed;
     }
-    #currentCanvase {
+    #currentCanvas {
       border: 1px solid black;
+      display: block;
     }
     #colors div {
       float: left;
@@ -32,7 +33,9 @@
       <div id="white"></div>
       <div id="gray"></div>
     </div>
-    <canvas width="4000" height="4000" id="currentCanvas">
+    <div style="clear:both;">
+      <canvas id="currentCanvas" height="4000" width="4000"></canvas>
+    </div>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
     <script src="graffinity.js"></script>
   </body>
