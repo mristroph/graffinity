@@ -13,7 +13,7 @@ var y;
 var paint;
 
 
-var host = location.origin.replace(/^http/, 'ws')
+var host = location.origin.replace(/^http/, 'ws');
 var ws = new WebSocket(host);
 
 ws.onmessage = function (event) {
@@ -90,15 +90,10 @@ $currentCanvas.mouseleave(function (e) {
 });
 
 
-/* START: color palette */
-var CSS_COLOR_NAMES = ["AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azure", "Beige", "Bisque", "Black", "BlanchedAlmond", "Blue", "BlueViolet", "Brown", "BurlyWood", "CadetBlue", "Chartreuse", "Chocolate", "Coral", "CornflowerBlue", "Cornsilk", "Crimson", "Cyan", "DarkBlue", "DarkCyan", "DarkGoldenRod", "DarkGray", "DarkGrey", "DarkGreen", "DarkKhaki", "DarkMagenta", "DarkOliveGreen", "Darkorange", "DarkOrchid", "DarkRed", "DarkSalmon", "DarkSeaGreen", "DarkSlateBlue", "DarkSlateGray", "DarkSlateGrey", "DarkTurquoise", "DarkViolet", "DeepPink", "DeepSkyBlue", "DimGray", "DimGrey", "DodgerBlue", "FireBrick", "FloralWhite", "ForestGreen", "Fuchsia", "Gainsboro", "GhostWhite", "Gold", "GoldenRod", "Gray", "Grey", "Green", "GreenYellow", "HoneyDew", "HotPink", "IndianRed", "Indigo", "Ivory", "Khaki", "Lavender", "LavenderBlush", "LawnGreen", "LemonChiffon", "LightBlue", "LightCoral", "LightCyan", "LightGoldenRodYellow", "LightGray", "LightGrey", "LightGreen", "LightPink", "LightSalmon", "LightSeaGreen", "LightSkyBlue", "LightSlateGray", "LightSlateGrey", "LightSteelBlue", "LightYellow", "Lime", "LimeGreen", "Linen", "Magenta", "Maroon", "MediumAquaMarine", "MediumBlue", "MediumOrchid", "MediumPurple", "MediumSeaGreen", "MediumSlateBlue", "MediumSpringGreen", "MediumTurquoise", "MediumVioletRed", "MidnightBlue", "MintCream", "MistyRose", "Moccasin", "NavajoWhite", "Navy", "OldLace", "Olive", "OliveDrab", "Orange", "OrangeRed", "Orchid", "PaleGoldenRod", "PaleGreen", "PaleTurquoise", "PaleVioletRed", "PapayaWhip", "PeachPuff", "Peru", "Pink", "Plum", "PowderBlue", "Purple", "Red", "RosyBrown", "RoyalBlue", "SaddleBrown", "Salmon", "SandyBrown", "SeaGreen", "SeaShell", "Sienna", "Silver", "SkyBlue", "SlateBlue", "SlateGray", "SlateGrey", "Snow", "SpringGreen", "SteelBlue", "Tan", "Teal", "Thistle", "Tomato", "Turquoise", "Violet", "Wheat", "White", "WhiteSmoke", "Yellow", "YellowGreen"];
-$.each(CSS_COLOR_NAMES, function (index, value) {
-  $colors.append('<div id="' + value + '" style="background-color: ' + value + ';"></div>');
-});
-
 $('#colors div').mousedown(function (e) {
   color = this.id;
   makeCursor();
+});
 /* START: color picker */
 $('#bgcolor').on('change', function() {
     color = this.value;
@@ -109,7 +104,7 @@ $('#bgcolor').on('change', function() {
 /* START: cursor code */
 makeCursor();
 
-(function makeCursor() {
+function makeCursor() {
   var cursor = document.createElement('canvas');
   cursor.width = 10;
   cursor.height = 10;
@@ -117,7 +112,8 @@ makeCursor();
   ctx.fillStyle = color;
   ctx.fillRect(0, 0, 10, 10);
   document.body.style.cursor = 'url(' + cursor.toDataURL() + ') 5 5, auto';
-})();
+};
+
 /* END: cursor code */
 var offsets = {x:0,y:0};
 var centering = false;
@@ -148,4 +144,27 @@ var centerCanvas = function centerCanvas() {
   ws.send(JSON.stringify({replay: true}));
   centering = false;
 }
-/* END: cursor code */
+
+$(function () {
+  var timeout;
+  $window
+    .resize(function () {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+      timeout = setTimeout(centerCanvas, 500);
+    })
+    .scroll(function(e){
+      var scrollTop = $(this).scrollTop();
+      var scrollLeft = $(this).scrollLeft();
+      if (scrollTop < windowHeight
+          || scrollTop > windowHeight * 3
+          || scrollLeft < windowWidth
+          || scrollLeft > windowWidth * 3) {
+        offsets.y += scrollTop - (windowHeight * 2);
+        offsets.x += scrollLeft - (windowWidth * 2);
+        centerCanvas();
+      }
+    });
+});
+
