@@ -6,10 +6,11 @@ Graffinity is an open &amp; infinite canvas. It's for all, by all, shared in rea
 # Running Locally
 
 You'll need mongodb installed...
-``` bash
+
+```
+bash
 npm install
-mongod --dbpath /tmp &
-foreman start
+mongod --dbpath /tmp & foreman start
 ```
 
 Then open a couple of windows and hit up localhost:5000!

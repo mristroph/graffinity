@@ -17,100 +17,154 @@ var host = location.origin.replace(/^http/, 'ws')
 var ws = new WebSocket(host);
 
 ws.onmessage = function (event) {
-    var p = JSON.parse(event.data);
-    addLine(p[0],p[1],p[2],p[3],p[4],p[5]);
+  var p = JSON.parse(event.data);
+
+  addLine(p[0] - offsets.x, p[1] - offsets.y, p[2]- offsets.x, p[3] - offsets.y, p[4], p[5]);
 };
 
 ws.onopen = function (event) {
-    connectedFunction();
+  connectedFunction();
+  centerCanvas();
 };
 
 ws.onclose = function (event) {
-    disconnectedFunction();
+  disconnectedFunction();
 };
 
 ws.onerror = function (event) {
-    disconnectedFunction();
+  disconnectedFunction();
 };
 
 function sendNumber() {
-    if (connected) {
-        var number = Math.round(Math.random() * 0xFFFFFF);
-        ws.sendUTF(number.toString());
-        setTimeout(sendNumber, 1000);
-    }
+  if (connected) {
+    var number = Math.round(Math.random() * 0xFFFFFF);
+    ws.sendUTF(number.toString());
+    setTimeout(sendNumber, 1000);
+  }
 }
 sendNumber();
 
 function connectedFunction() {
-    connected = true;
-    $body.removeClass("disconnected").addClass("connected");
+  connected = true;
+  $body.removeClass("disconnected").addClass("connected");
 }
 function disconnectedFunction() {
-    connected = false;
-    $body.removeClass("connected").addClass("disconnected");
+  connected = false;
+  $body.removeClass("connected").addClass("disconnected");
 }
 
-function addLine(x1,y1,x2,y2,lineColor,lineWidth) {
-    context.strokeStyle = lineColor;
-    context.lineJoin = "round";
-    context.lineWidth = lineWidth;
-    context.beginPath();
-    context.moveTo(x1,y1);
-    context.lineTo(x2, y2, true);
-    context.closePath();
-    context.stroke();
+function addLine(x1, y1, x2, y2, lineColor, lineWidth) {
+  context.strokeStyle = lineColor;
+  context.lineJoin = "round";
+  context.lineWidth = lineWidth;
+  context.beginPath();
+  context.moveTo(x1, y1);
+  context.lineTo(x2, y2, true);
+  context.closePath();
+  context.stroke();
 }
 
-$currentCanvas.mousedown(function(e){
-	x = e.pageX - this.offsetLeft;
-	y = e.pageY - this.offsetTop;
-	paint = true;
-    });
-
-$currentCanvas.mousemove(function(e){
-	if(paint && connected){
-	    oldX = x;
-	    oldY = y;
-	    x = e.pageX - this.offsetLeft;
-	    y = e.pageY - this.offsetTop;
-	    addLine(oldX, oldY, x, y, color, width);
-	    ws.send(JSON.stringify([oldX,oldY,x,y,color,width]));
-
-	}
-    });
-
-$currentCanvas.mouseup(function(e){
-	paint = false;
+$currentCanvas.mousedown(function (e) {
+  x = e.pageX - this.offsetLeft;
+  y = e.pageY - this.offsetTop;
+  paint = true;
 });
 
-$currentCanvas.mouseleave(function(e){
-	paint = false;
+$currentCanvas.mousemove(function (e) {
+  if (paint && connected) {
+    oldX = x;
+    oldY = y;
+    x = e.pageX - this.offsetLeft;
+    y = e.pageY - this.offsetTop;
+    addLine(oldX, oldY, x, y, color, width);
+    ws.send(JSON.stringify({draw: [oldX+offsets.x, oldY+offsets.y, x+offsets.x, y+offsets.y, color, width]}));
+  }
+});
+
+$currentCanvas.mouseup(function (e) {
+  paint = false;
+});
+
+$currentCanvas.mouseleave(function (e) {
+  paint = false;
 });
 
 
 /* START: color palette */
-var CSS_COLOR_NAMES = ["AliceBlue","AntiqueWhite","Aqua","Aquamarine","Azure","Beige","Bisque","Black","BlanchedAlmond","Blue","BlueViolet","Brown","BurlyWood","CadetBlue","Chartreuse","Chocolate","Coral","CornflowerBlue","Cornsilk","Crimson","Cyan","DarkBlue","DarkCyan","DarkGoldenRod","DarkGray","DarkGrey","DarkGreen","DarkKhaki","DarkMagenta","DarkOliveGreen","Darkorange","DarkOrchid","DarkRed","DarkSalmon","DarkSeaGreen","DarkSlateBlue","DarkSlateGray","DarkSlateGrey","DarkTurquoise","DarkViolet","DeepPink","DeepSkyBlue","DimGray","DimGrey","DodgerBlue","FireBrick","FloralWhite","ForestGreen","Fuchsia","Gainsboro","GhostWhite","Gold","GoldenRod","Gray","Grey","Green","GreenYellow","HoneyDew","HotPink","IndianRed","Indigo","Ivory","Khaki","Lavender","LavenderBlush","LawnGreen","LemonChiffon","LightBlue","LightCoral","LightCyan","LightGoldenRodYellow","LightGray","LightGrey","LightGreen","LightPink","LightSalmon","LightSeaGreen","LightSkyBlue","LightSlateGray","LightSlateGrey","LightSteelBlue","LightYellow","Lime","LimeGreen","Linen","Magenta","Maroon","MediumAquaMarine","MediumBlue","MediumOrchid","MediumPurple","MediumSeaGreen","MediumSlateBlue","MediumSpringGreen","MediumTurquoise","MediumVioletRed","MidnightBlue","MintCream","MistyRose","Moccasin","NavajoWhite","Navy","OldLace","Olive","OliveDrab","Orange","OrangeRed","Orchid","PaleGoldenRod","PaleGreen","PaleTurquoise","PaleVioletRed","PapayaWhip","PeachPuff","Peru","Pink","Plum","PowderBlue","Purple","Red","RosyBrown","RoyalBlue","SaddleBrown","Salmon","SandyBrown","SeaGreen","SeaShell","Sienna","Silver","SkyBlue","SlateBlue","SlateGray","SlateGrey","Snow","SpringGreen","SteelBlue","Tan","Teal","Thistle","Tomato","Turquoise","Violet","Wheat","White","WhiteSmoke","Yellow","YellowGreen"];
-$.each(CSS_COLOR_NAMES, function( index, value ) {
-    $colors.append('<div id="' + value + '" style="background-color: ' + value + ';"></div>');
+var CSS_COLOR_NAMES = ["AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azure", "Beige", "Bisque", "Black", "BlanchedAlmond", "Blue", "BlueViolet", "Brown", "BurlyWood", "CadetBlue", "Chartreuse", "Chocolate", "Coral", "CornflowerBlue", "Cornsilk", "Crimson", "Cyan", "DarkBlue", "DarkCyan", "DarkGoldenRod", "DarkGray", "DarkGrey", "DarkGreen", "DarkKhaki", "DarkMagenta", "DarkOliveGreen", "Darkorange", "DarkOrchid", "DarkRed", "DarkSalmon", "DarkSeaGreen", "DarkSlateBlue", "DarkSlateGray", "DarkSlateGrey", "DarkTurquoise", "DarkViolet", "DeepPink", "DeepSkyBlue", "DimGray", "DimGrey", "DodgerBlue", "FireBrick", "FloralWhite", "ForestGreen", "Fuchsia", "Gainsboro", "GhostWhite", "Gold", "GoldenRod", "Gray", "Grey", "Green", "GreenYellow", "HoneyDew", "HotPink", "IndianRed", "Indigo", "Ivory", "Khaki", "Lavender", "LavenderBlush", "LawnGreen", "LemonChiffon", "LightBlue", "LightCoral", "LightCyan", "LightGoldenRodYellow", "LightGray", "LightGrey", "LightGreen", "LightPink", "LightSalmon", "LightSeaGreen", "LightSkyBlue", "LightSlateGray", "LightSlateGrey", "LightSteelBlue", "LightYellow", "Lime", "LimeGreen", "Linen", "Magenta", "Maroon", "MediumAquaMarine", "MediumBlue", "MediumOrchid", "MediumPurple", "MediumSeaGreen", "MediumSlateBlue", "MediumSpringGreen", "MediumTurquoise", "MediumVioletRed", "MidnightBlue", "MintCream", "MistyRose", "Moccasin", "NavajoWhite", "Navy", "OldLace", "Olive", "OliveDrab", "Orange", "OrangeRed", "Orchid", "PaleGoldenRod", "PaleGreen", "PaleTurquoise", "PaleVioletRed", "PapayaWhip", "PeachPuff", "Peru", "Pink", "Plum", "PowderBlue", "Purple", "Red", "RosyBrown", "RoyalBlue", "SaddleBrown", "Salmon", "SandyBrown", "SeaGreen", "SeaShell", "Sienna", "Silver", "SkyBlue", "SlateBlue", "SlateGray", "SlateGrey", "Snow", "SpringGreen", "SteelBlue", "Tan", "Teal", "Thistle", "Tomato", "Turquoise", "Violet", "Wheat", "White", "WhiteSmoke", "Yellow", "YellowGreen"];
+$.each(CSS_COLOR_NAMES, function (index, value) {
+  $colors.append('<div id="' + value + '" style="background-color: ' + value + ';"></div>');
 });
 
-$('#colors div').mousedown(function(e){
-    color = this.id;
-    makeCursor();
+$('#colors div').mousedown(function (e) {
+  color = this.id;
+  makeCursor();
 });
 /* END: color palette */
 
 /* START: cursor code */
-makeCursor();
 
-function makeCursor() {
-    var cursor = document.createElement('canvas');
-    cursor.width = 10;
-    cursor.height = 10;
-    ctx = cursor.getContext('2d');
-    ctx.fillStyle = color;
-    ctx.fillRect(0,0,10,10);
-    document.body.style.cursor = 'url(' + cursor.toDataURL() + ') 5 5, auto';
-}
+(function makeCursor() {
+  var cursor = document.createElement('canvas');
+  cursor.width = 10;
+  cursor.height = 10;
+  ctx = cursor.getContext('2d');
+  ctx.fillStyle = color;
+  ctx.fillRect(0, 0, 10, 10);
+  document.body.style.cursor = 'url(' + cursor.toDataURL() + ') 5 5, auto';
+})();
 /* END: cursor code */
+var offsets = {x:0,y:0};
+var centering = false;
+var windowHeight, windowWidth;
+var $window = $(window);
+var centerCanvas = function centerCanvas() {
+  if (centering) {
+    return;
+  }
+  centering = true;
+  windowWidth = $(window).width();
+  windowHeight = $(window).height();
+  var canvasWidth = $currentCanvas.width();
+  var canvasHeight = $currentCanvas.height();
+  var img = context.getImageData(0, 0, $currentCanvas.width(), $currentCanvas.height());
+
+  $currentCanvas
+    .attr('width', windowWidth * 3)
+    .attr('height', windowHeight * 3);
+  $('#scroll-space').css({
+    width: windowWidth * 5,
+    height: windowHeight * 5
+  });
+  context.putImageData(img, (windowWidth - canvasWidth) / 2, (windowHeight - canvasHeight) / 2);
+  $('body')
+    .scrollTop(windowHeight * 2)
+    .scrollLeft(windowWidth * 2);
+  ws.send(JSON.stringify({replay: true}));
+  centering = false;
+}
+
+$(function () {
+  var timeout;
+
+  $window
+    .resize(function () {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+      timeout = setTimeout(centerCanvas, 500);
+    })
+    .scroll(function(e){
+      var scrollTop = $(this).scrollTop();
+      var scrollLeft = $(this).scrollLeft();
+      if (scrollTop < windowHeight
+        || scrollTop > windowHeight * 3
+        || scrollLeft < windowWidth
+        || scrollLeft > windowWidth * 3) {
+        offsets.y += scrollTop - (windowHeight * 2);
+        offsets.x += scrollLeft - (windowWidth * 2);
+        centerCanvas();
+      }
+    });
+});
+
