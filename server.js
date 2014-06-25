@@ -43,28 +43,35 @@ wss.on('connection', function (ws) {
   ws.on('message', function (message) {
     var data = JSON.parse(message);
     if (data.draw) {
+      var line = data.draw;
       var draw = JSON.stringify(data.draw);
       wss.broadcast(draw);
-      objects.insert({servertime: new Date().getTime(), message: draw}, {w: 1}, function (err, result) {
+      objects.insert({
+        servertime: new Date().getTime(),
+        message: draw,
+        startX: line[0],
+        startY: line[1],
+        endX: line[2],
+        endY: line[3]
+      }, {w: 1}, function (err, result) {
         if (err) {
           console.log('err', err);
         }
       });
     }
     if (data.replay) {
-      console.log('replay', objects);
-      playAll();
+      playAll(data.replay);
     }
   });
 
-  function playAll() {
-    objects.find({}).each(function (err, doc) {
+  function playAll(coords) {
+    objects.find({
+      startX: {$gt: coords.x, $lt: coords.x + coords.w},
+      startY: {$gt: coords.y, $lt: coords.y + coords.h}
+    }).each(function (err, doc) {
       if (doc) {
         ws.send(doc['message']);
       }
     });
   }
-
-  playAll();
-
 });

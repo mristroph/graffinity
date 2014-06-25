@@ -128,7 +128,7 @@ var centerCanvas = function centerCanvas() {
   windowHeight = $(window).height();
   var canvasWidth = $currentCanvas.width();
   var canvasHeight = $currentCanvas.height();
-  var img = context.getImageData(0, 0, $currentCanvas.width(), $currentCanvas.height());
+  //var img = context.getImageData(0, 0, $currentCanvas.width(), $currentCanvas.height());
 
   $currentCanvas
     .attr('width', windowWidth * 3)
@@ -137,11 +137,16 @@ var centerCanvas = function centerCanvas() {
     width: windowWidth * 5,
     height: windowHeight * 5
   });
-  context.putImageData(img, (windowWidth - canvasWidth) / 2, (windowHeight - canvasHeight) / 2);
+  //context.putImageData(img, (windowWidth - canvasWidth) / 2, (windowHeight - canvasHeight) / 2);
   $('body')
     .scrollTop(windowHeight * 2)
     .scrollLeft(windowWidth * 2);
-  ws.send(JSON.stringify({replay: true}));
+
+  ws.send(JSON.stringify({replay: {
+    x: offsets.x,
+    y: offsets.y,
+    w: windowWidth * 3,
+    h: windowHeight * 3}}));
   centering = false;
 }
 
@@ -154,7 +159,7 @@ $(function () {
       }
       timeout = setTimeout(centerCanvas, 500);
     })
-    .scroll(function(e){
+    .scroll(function(){
       var scrollTop = $(this).scrollTop();
       var scrollLeft = $(this).scrollLeft();
       if (scrollTop < windowHeight

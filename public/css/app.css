@@ -14,6 +14,7 @@ body, html {
 }
 #colors {
   position: fixed;
+  z-index: 2;
 }
 #colors div {
   float: left;
