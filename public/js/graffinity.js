@@ -99,10 +99,15 @@ $.each(CSS_COLOR_NAMES, function (index, value) {
 $('#colors div').mousedown(function (e) {
   color = this.id;
   makeCursor();
+/* START: color picker */
+$('#bgcolor').on('change', function() {
+    color = this.value;
+    makeCursor();
 });
-/* END: color palette */
+/* END: color picker */
 
 /* START: cursor code */
+makeCursor();
 
 (function makeCursor() {
   var cursor = document.createElement('canvas');
@@ -143,28 +148,4 @@ var centerCanvas = function centerCanvas() {
   ws.send(JSON.stringify({replay: true}));
   centering = false;
 }
-
-$(function () {
-  var timeout;
-
-  $window
-    .resize(function () {
-      if (timeout) {
-        clearTimeout(timeout);
-      }
-      timeout = setTimeout(centerCanvas, 500);
-    })
-    .scroll(function(e){
-      var scrollTop = $(this).scrollTop();
-      var scrollLeft = $(this).scrollLeft();
-      if (scrollTop < windowHeight
-        || scrollTop > windowHeight * 3
-        || scrollLeft < windowWidth
-        || scrollLeft > windowWidth * 3) {
-        offsets.y += scrollTop - (windowHeight * 2);
-        offsets.x += scrollLeft - (windowWidth * 2);
-        centerCanvas();
-      }
-    });
-});
-
+/* END: cursor code */
