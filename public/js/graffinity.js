@@ -75,7 +75,10 @@ $currentCanvas.mousemove(function (e) {
     oldY = y;
     x = e.pageX - this.offsetLeft;
     y = e.pageY - this.offsetTop;
-    addLine(oldX, oldY, x, y, color, width);
+    console.log(color);
+    var rgb = hexToRgb(color);
+    console.log(rgb);
+    addLine(oldX, oldY, x, y, 'rgba('+rgb.r+','+rgb.g+','+rgb.b+', 0.3)', width);
     ws.send(JSON.stringify({draw: [oldX+offsets.x, oldY+offsets.y, x+offsets.x, y+offsets.y, color, width]}));
   }
 });
@@ -89,10 +92,6 @@ $currentCanvas.mouseleave(function (e) {
 });
 
 
-$('#colors div').mousedown(function (e) {
-  color = this.id;
-  makeCursor();
-});
 /* START: color picker */
 $('#bgcolor').on('change', function() {
     color = this.value;
@@ -161,6 +160,21 @@ var centerCanvas = function centerCanvas() {
   centering = false;
 }
 
+function hexToRgb(hex) {
+  // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+  var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+  hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+    return r + r + g + g + b + b;
+  });
+
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16)
+  } : null;
+}
+
 $(function () {
   var timeout;
   $window
@@ -183,11 +197,10 @@ $(function () {
       }
     });
 
-  $('#brush-size input').change(function (e) {
+   $('#brush-size input').change(function (e) {
     width = $(this).val();
     makeCursor();
-  })
-    .val(color);
+  }).val();
 
 });
 
