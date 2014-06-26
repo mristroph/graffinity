@@ -3,14 +3,18 @@
   <head>
     <meta charset="utf-8">
     <title>Graffinity</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, height=device-height initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="stylesheet" type="text/css" href="css/app.css" />
   </head>
   <body>
     <div id="colors">
-      <input type="color" value="#ffffff" id="bgcolor" name="bgcolor">
+      <input type="color" value="#000000" id="bgcolor" name="bgcolor">
+      <div id="brush-size">
+        <div class="sample"></div>
+        <input type="range" min="1" max="50" value="5">
+      </div>
     </div>
     <div style="clear:both;" id="scroll-space">
       <canvas id="currentCanvas" height="4000" width="4000"></canvas>

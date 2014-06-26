@@ -2,7 +2,6 @@
 var context = document.getElementById('currentCanvas').getContext("2d");
 var $body = $('body');
 var $currentCanvas = $('#currentCanvas');
-var $colors = $("#colors");
 
 // Variables
 var connected = false;
@@ -99,6 +98,7 @@ $('#bgcolor').on('change', function() {
     color = this.value;
     makeCursor();
 });
+
 /* END: color picker */
 
 /* START: cursor code */
@@ -106,13 +106,24 @@ makeCursor();
 
 function makeCursor() {
   var cursor = document.createElement('canvas');
-  cursor.width = 10;
-  cursor.height = 10;
+  cursor.width = cursor.height = width;
   ctx = cursor.getContext('2d');
   ctx.fillStyle = color;
-  ctx.fillRect(0, 0, 10, 10);
+  //ctx.fillRect(0, 0, 10, 10);
+  ctx.beginPath();
+  ctx.arc(width/2,width/2,width/2,0,2*Math.PI);
+  ctx.fill();
+
   document.body.style.cursor = 'url(' + cursor.toDataURL() + ') 5 5, auto';
-};
+  renderSample();
+}
+function renderSample(){
+  $('#brush-size .sample').css({
+    background: $('#bgcolor').val(),
+    width: width,
+    height: width
+  });
+}
 
 /* END: cursor code */
 var offsets = {x:0,y:0};
@@ -171,5 +182,12 @@ $(function () {
         centerCanvas();
       }
     });
+
+  $('#brush-size input').change(function (e) {
+    width = $(this).val();
+    makeCursor();
+  })
+    .val(color);
+
 });
 
