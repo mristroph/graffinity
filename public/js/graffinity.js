@@ -64,24 +64,27 @@ function addLine(x1, y1, x2, y2, lineColor, lineWidth) {
 }
 
 $currentCanvas.mousedown(function (e) {
-  x = e.pageX - this.offsetLeft;
-  y = e.pageY - this.offsetTop;
   paint = true;
+  if (e.shiftKey) {
+    drawLine(e);
+  } else {
+    x = e.pageX - windowWidth;
+    y = e.pageY - windowHeight;
+  }
 });
 
-$currentCanvas.mousemove(function (e) {
+$currentCanvas.mousemove(drawLine);
+function drawLine(e) {
   if (paint && connected) {
     oldX = x;
     oldY = y;
-    x = e.pageX - this.offsetLeft;
-    y = e.pageY - this.offsetTop;
-    console.log(color);
+    x = e.pageX - windowWidth;
+    y = e.pageY - windowHeight;
     var rgb = hexToRgb(color);
-    console.log(rgb);
     addLine(oldX, oldY, x, y, 'rgba('+rgb.r+','+rgb.g+','+rgb.b+', 0.3)', width);
     ws.send(JSON.stringify({draw: [oldX+offsets.x, oldY+offsets.y, x+offsets.x, y+offsets.y, color, width]}));
   }
-});
+}
 
 $currentCanvas.mouseup(function (e) {
   paint = false;

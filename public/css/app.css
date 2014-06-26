@@ -6,7 +6,6 @@ body, html {
   cursor: not-allowed;
 }
 #currentCanvas {
-  border: 1px solid black;
   display: block;
   position: absolute;
   top: 20%;
