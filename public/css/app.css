@@ -24,6 +24,11 @@ body, html {
   width: 500%;
   height: 500%;
   position: relative;
+  overflow: hidden;
+}
+#subcanvas {
+  position: absolute;
+  z-index: -1;
 }
 #brush-size .sample {
   border-radius: 50%;

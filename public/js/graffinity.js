@@ -68,8 +68,8 @@ $currentCanvas.mousedown(function (e) {
   if (e.shiftKey) {
     drawLine(e);
   } else {
-    x = e.pageX - windowWidth;
-    y = e.pageY - windowHeight;
+    x = e.pageX - windowWidth + width/2;
+    y = e.pageY - windowHeight + width/2;
   }
 });
 
@@ -78,8 +78,8 @@ function drawLine(e) {
   if (paint && connected) {
     oldX = x;
     oldY = y;
-    x = e.pageX - windowWidth;
-    y = e.pageY - windowHeight;
+    x = e.pageX - windowWidth + width/2;
+    y = e.pageY - windowHeight + width/2;
     var rgb = hexToRgb(color);
     addLine(oldX, oldY, x, y, 'rgba('+rgb.r+','+rgb.g+','+rgb.b+', 0.3)', width);
     ws.send(JSON.stringify({draw: [oldX+offsets.x, oldY+offsets.y, x+offsets.x, y+offsets.y, color, width]}));
@@ -132,7 +132,7 @@ var offsets = {x:0,y:0};
 var centering = false;
 var windowHeight, windowWidth;
 var $window = $(window);
-var centerCanvas = function centerCanvas() {
+var centerCanvas = function centerCanvas(param) {
   if (centering) {
     return;
   }
@@ -141,20 +141,44 @@ var centerCanvas = function centerCanvas() {
   windowHeight = $(window).height();
   var canvasWidth = $currentCanvas.width();
   var canvasHeight = $currentCanvas.height();
-  //var img = context.getImageData(0, 0, $currentCanvas.width(), $currentCanvas.height());
 
-  $currentCanvas
-    .attr('width', windowWidth * 3)
-    .attr('height', windowHeight * 3);
-  $('#scroll-space').css({
-    width: windowWidth * 5,
-    height: windowHeight * 5
-  });
-  //context.putImageData(img, (windowWidth - canvasWidth) / 2, (windowHeight - canvasHeight) / 2);
+  if (param && param.scrollTop) {
+    var img = context.getImageData(0, 0, canvasWidth, canvasWidth);
+//
+//    var $subcanvas = $('<canvas>', {id: 'subcanvas'})
+//      .attr('width', canvasWidth)
+//      .attr('height', canvasHeight)
+//      .css({
+//        // scrollTop = 0 : top = wh;
+//        // scrollTop = 1wh: top= 0;
+//        // scrollTop = 2wh: top=-wh;
+//        top: windowHeight*2 - param.scrollTop,
+//        left: windowWidth*3 - param.scrollLeft,
+//        display: 'block'
+//      })
+//      .appendTo('#scroll-space');
+//    $subcanvas[0].getContext('2d').putImageData(
+//
+//    );
+
+
+  } else {
+    $currentCanvas
+      .attr('width', windowWidth * 3)
+      .attr('height', windowHeight * 3);
+    $('#scroll-space').css({
+      width: windowWidth * 5,
+      height: windowHeight * 5
+    });
+  }
+
   $('body')
     .scrollTop(windowHeight * 2)
     .scrollLeft(windowWidth * 2);
-
+  context.clearRect(0,0,canvasWidth, canvasHeight);
+  if (img) {
+    context.putImageData(img, -offsets.relX, -offsets.relY);
+  }
   ws.send(JSON.stringify({replay: {
     x: offsets.x,
     y: offsets.y,
@@ -181,7 +205,7 @@ function hexToRgb(hex) {
 $(function () {
   var timeout;
   $window
-    .resize(function () {
+    .resize(function (e) {
       if (timeout) {
         clearTimeout(timeout);
       }
@@ -194,9 +218,14 @@ $(function () {
           || scrollTop > windowHeight * 3
           || scrollLeft < windowWidth
           || scrollLeft > windowWidth * 3) {
-        offsets.y += scrollTop - (windowHeight * 2);
-        offsets.x += scrollLeft - (windowWidth * 2);
-        centerCanvas();
+        offsets.relX = scrollLeft - (windowWidth * 2);
+        offsets.relY = scrollTop - (windowHeight * 2);
+        offsets.x += offsets.relX;
+        offsets.y += offsets.relY;
+
+        setTimeout(function(){
+          centerCanvas({scrollTop: scrollTop, scrollLeft: scrollLeft});
+        }, 0);
       }
     });
 
